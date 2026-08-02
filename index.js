@@ -34,7 +34,12 @@ if (process.env.NODE_ENV === 'development') {
 
 // Serve static uploads
 const path = require('path');
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const fs = require('fs');
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadDir));
 
 // Routes
 app.use('/api/auth', require('./src/routes/authRoutes'));
