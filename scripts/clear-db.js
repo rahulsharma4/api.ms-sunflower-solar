@@ -50,12 +50,12 @@ const clearData = async () => {
     await Contact.deleteMany({});
     console.log('Cleared all Contacts');
 
-    // Delete counters to reset sequence IDs (LUP, RUP, DEV)
+    // Delete counters to reset sequence IDs (LUP, RUP, AVP)
     await Counter.deleteMany({});
     console.log('Cleared all Counters (Sequence IDs Reset)');
 
     // Delete all users EXCEPT the admin
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@divyaecoventures.com';
+    const adminEmail = process.env.ADMIN_EMAIL || 'volthut@gmail.com';
     const result = await User.deleteMany({ email: { $ne: adminEmail } });
     console.log(`Cleared ${result.deletedCount} Users (Main Admin Retained)`);
 

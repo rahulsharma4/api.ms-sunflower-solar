@@ -63,9 +63,9 @@ const createQuotation = async (req, res) => {
 
     const ownerId = req.user.role === 'admin' ? req.user._id : req.user.owner;
 
-    // Generate DEV order ID
+    // Generate AVP order ID
     const orderSeq = await getNextSequenceValue('order_counter');
-    const orderId = `DEV${orderSeq.toString().padStart(3, '0')}`;
+    const orderId = `AVP${orderSeq.toString().padStart(3, '0')}`;
 
     const quotation = await Quotation.create({
       ...req.body,
@@ -76,7 +76,7 @@ const createQuotation = async (req, res) => {
       solarPanels: solarPanels || 'N/A',
       inverter: inverter || 'N/A',
       structureType: structureType || '',
-      offering: offering || 'Divya Eco Ventures',
+      offering: offering || 'Azad Volthut Power LLP',
       gsmBased: gsmBased || 'No',
       cleaningFrequency: cleaningFrequency || 'NO',
       floorHeight: floorHeight || '',

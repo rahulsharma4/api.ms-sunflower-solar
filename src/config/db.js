@@ -1,4 +1,12 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+
+// Use reliable Google/Cloudflare DNS servers to prevent querySrv ECONNREFUSED on local ISPs
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {
+  // Ignore if setting DNS fails
+}
 
 const connectDB = async () => {
   const connectWithRetry = async () => {

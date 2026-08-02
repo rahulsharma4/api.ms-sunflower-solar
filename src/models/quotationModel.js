@@ -76,7 +76,7 @@ const quotationSchema = mongoose.Schema(
     installationMake: { type: String, default: '' },
     installationQty: { type: String, default: 'Each' },
 
-    offering: { type: String }, // e.g. "Divya Eco Ventures"
+    offering: { type: String }, // e.g. "Azad Volthut Power LLP"
     gsmBased: { type: String, default: 'No' },
     cleaningFrequency: { type: String, default: 'NO' },
     floorHeight: { type: String }, // e.g. "G+0"
@@ -129,8 +129,8 @@ const quotationSchema = mongoose.Schema(
         'Quotation Created',
         'Advance received',
         'Advance confirmed',
-        'DEV initiated',
-        'DEV done',
+        'AVP initiated',
+        'AVP done',
         'Material delivery planned',
         'Material dispatched',
         'Material delivery done',
