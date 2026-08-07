@@ -203,7 +203,7 @@ const updateQuotation = async (req, res) => {
       return res.status(404).json({ message: 'Quotation not found' });
     }
 
-    if (quotation.status === 'Converted') {
+    if (quotation.status === 'Converted' && req.user.role !== 'admin') {
       return res.status(400).json({ message: 'Converted quotation cannot be edited' });
     }
 
@@ -400,4 +400,19 @@ const updateEmiStatus = async (req, res) => {
   }
 };
 
-module.exports = { createQuotation, getQuotations, getQuotationById, updateQuotation, updateFulfillmentStatus, updateEmiStatus };
+const deleteQuotation = async (req, res) => {
+  try {
+    const quotation = await Quotation.findById(req.params.id);
+
+    if (!quotation) {
+      return res.status(404).json({ message: 'Quotation not found' });
+    }
+
+    await quotation.deleteOne();
+    res.json({ message: 'Quotation deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { createQuotation, getQuotations, getQuotationById, updateQuotation, deleteQuotation, updateFulfillmentStatus, updateEmiStatus };

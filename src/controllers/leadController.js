@@ -159,7 +159,7 @@ const updateLead = async (req, res) => {
 
     if (lead) {
       // Check if lead is closed
-      if (lead.status === 'Closed') {
+      if (lead.status === 'Closed' && req.user.role !== 'admin') {
         return res.status(400).json({ message: 'This lead is closed and cannot be modified' });
       }
 
@@ -215,9 +215,12 @@ const updateLead = async (req, res) => {
         lead.personalInfo = { ...lead.personalInfo, ...req.body.personalInfo };
       }
 
-      // Only admin can reassign leads
+      // Only admin can reassign leads & edit creation date
       if (req.user.role === 'admin') {
         lead.assignedTo = req.body.assignedTo || lead.assignedTo;
+        if (req.body.createdAt) {
+          lead.createdAt = new Date(req.body.createdAt);
+        }
       }
 
       const isNewFollowUp = req.body.followUpDate && req.body.followUpDate !== lead.followUpDate?.toISOString();
@@ -297,10 +300,26 @@ const logPhoneView = async (req, res) => {
   }
 };
 
+const deleteLead = async (req, res) => {
+  try {
+    const lead = await Lead.findById(req.params.id);
+
+    if (!lead) {
+      return res.status(404).json({ message: 'Lead not found' });
+    }
+
+    await lead.deleteOne();
+    res.json({ message: 'Lead deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = { 
   createLead, 
   getLeads, 
   updateLead, 
+  deleteLead,
   logPhoneView,
   createPublicReferral,
   handleGoogleFormWebhook

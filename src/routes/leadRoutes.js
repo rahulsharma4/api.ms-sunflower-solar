@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { createLead, getLeads, updateLead, logPhoneView, createPublicReferral, handleGoogleFormWebhook } = require('../controllers/leadController');
+const { createLead, getLeads, updateLead, deleteLead, logPhoneView, createPublicReferral, handleGoogleFormWebhook } = require('../controllers/leadController');
 const { verifyWebhook, receiveWebhook } = require('../controllers/fbController');
 const { handleWebsiteWebhook } = require('../controllers/contactController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, admin } = require('../middleware/authMiddleware');
 
 // Public Route
 router.post('/public-referral', createPublicReferral);
@@ -27,7 +27,8 @@ router.route('/')
   .get(protect, getLeads);
 
 router.route('/:id')
-  .patch(protect, updateLead);
+  .patch(protect, updateLead)
+  .delete(protect, admin, deleteLead);
 
 router.post('/:id/log-view-phone', protect, logPhoneView);
 

@@ -142,4 +142,72 @@ const deleteInvoice = async (req, res) => {
   }
 };
 
-module.exports = { createInvoice, getInvoices, deleteInvoice };
+// @desc    Update an invoice
+// @route   PUT /api/invoices/:id
+// @access  Private/Admin
+const updateInvoice = async (req, res) => {
+  try {
+    const { 
+      systemSize, solarPanels, inverter,
+      baseAmount, gstPercentage, amountPaid, bankDetails, isGstInclusive
+    } = req.body;
+
+    const invoice = await Invoice.findById(req.params.id);
+    if (!invoice) {
+      return res.status(404).json({ message: 'Invoice not found' });
+    }
+
+    // Calculations
+    const isInclusive = isGstInclusive !== undefined 
+      ? (isGstInclusive === true || isGstInclusive === 'true')
+      : invoice.isGstInclusive;
+    
+    const gstPerc = gstPercentage !== undefined ? Number(gstPercentage) : invoice.gstPercentage;
+    const finalGstPerc = isInclusive ? 8.9 : gstPerc;
+
+    const finalBaseAmount = baseAmount !== undefined ? Number(baseAmount) : (isInclusive ? invoice.totalAmount : invoice.baseAmount);
+    const finalAmountPaid = amountPaid !== undefined ? Number(amountPaid) : invoice.amountPaid;
+
+    let gstAmount = 0;
+    let totalAmount = 0;
+    let storedBaseAmount = 0;
+
+    if (isInclusive) {
+      totalAmount = finalBaseAmount;
+      gstAmount = (totalAmount * 8.9) / 108.9;
+      storedBaseAmount = totalAmount - gstAmount;
+    } else {
+      storedBaseAmount = finalBaseAmount;
+      gstAmount = (storedBaseAmount * finalGstPerc) / 100;
+      totalAmount = storedBaseAmount + gstAmount;
+    }
+
+    const balanceAmount = totalAmount - finalAmountPaid;
+    
+    let paymentStatus = 'Unpaid';
+    if (finalAmountPaid > 0) {
+      paymentStatus = finalAmountPaid >= totalAmount ? 'Paid' : 'Partially Paid';
+    }
+
+    invoice.systemSize = systemSize !== undefined ? systemSize : invoice.systemSize;
+    invoice.solarPanels = solarPanels !== undefined ? solarPanels : invoice.solarPanels;
+    invoice.inverter = inverter !== undefined ? inverter : invoice.inverter;
+    invoice.baseAmount = storedBaseAmount;
+    invoice.gstPercentage = finalGstPerc;
+    invoice.gstAmount = gstAmount;
+    invoice.isGstInclusive = isInclusive;
+    invoice.totalAmount = totalAmount;
+    invoice.amountPaid = finalAmountPaid;
+    invoice.balanceAmount = balanceAmount;
+    invoice.paymentStatus = paymentStatus;
+    invoice.bankDetails = bankDetails !== undefined ? bankDetails : invoice.bankDetails;
+
+    await invoice.save();
+
+    res.json(invoice);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = { createInvoice, getInvoices, updateInvoice, deleteInvoice };

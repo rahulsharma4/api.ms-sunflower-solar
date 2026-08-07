@@ -4,6 +4,7 @@ const {
   getEstimations,
   getEstimation,
   createEstimation,
+  updateEstimation,
   updateEstimationStatus,
   deleteEstimation,
 } = require('../controllers/estimationController');
@@ -17,6 +18,7 @@ router.route('/')
 
 router.route('/:id')
   .get(getEstimation)
+  .put(admin, updateEstimation)
   .delete(admin, deleteEstimation);
 
 router.route('/:id/status')
