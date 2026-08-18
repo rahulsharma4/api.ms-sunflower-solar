@@ -76,7 +76,7 @@ const createQuotation = async (req, res) => {
       solarPanels: solarPanels || 'N/A',
       inverter: inverter || 'N/A',
       structureType: structureType || '',
-      offering: offering || 'Azad Volthut Power LLP',
+      offering: offering || 'M/S Sunflower Solar',
       gsmBased: gsmBased || 'No',
       cleaningFrequency: cleaningFrequency || 'NO',
       floorHeight: floorHeight || '',

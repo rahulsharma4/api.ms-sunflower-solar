@@ -76,7 +76,7 @@ const quotationSchema = mongoose.Schema(
     installationMake: { type: String, default: '' },
     installationQty: { type: String, default: 'Each' },
 
-    offering: { type: String }, // e.g. "Azad Volthut Power LLP"
+    offering: { type: String }, // e.g. "M/S Sunflower Solar"
     gsmBased: { type: String, default: 'No' },
     cleaningFrequency: { type: String, default: 'NO' },
     floorHeight: { type: String }, // e.g. "G+0"

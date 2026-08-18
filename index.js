@@ -55,7 +55,7 @@ app.post('/api/webhook', require('./src/controllers/contactController').handleWe
 
 
 app.get('/', (req, res) => {
-  res.send('Azad Volthut Power LLP CRM API is running...');
+  res.send('M/S Sunflower Solar CRM API is running...');
 });
 
 const PORT = process.env.PORT || 5000;

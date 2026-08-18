@@ -13,15 +13,15 @@ const {
   handleGoogleFormWebhook,
   handleWebsiteWebhook,
 } = require('../controllers/contactController');
-const { protect, admin } = require('../middleware/authMiddleware');
+const { protect, admin, adminOrTelecaller } = require('../middleware/authMiddleware');
 
 router.route('/')
   .get(protect, getContacts)
   .post(protect, admin, createContact);
 
 router.route('/bulk')
-  .post(protect, admin, bulkCreateContacts)
-  .delete(protect, admin, bulkDeleteContacts);
+  .post(protect, adminOrTelecaller, bulkCreateContacts)
+  .delete(protect, adminOrTelecaller, bulkDeleteContacts);
 
 // Webhooks
 router.post('/google-form-webhook', handleGoogleFormWebhook);

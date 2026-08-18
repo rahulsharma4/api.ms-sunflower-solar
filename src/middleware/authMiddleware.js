@@ -45,4 +45,12 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+const adminOrTelecaller = (req, res, next) => {
+  if (req.user && (req.user.role === 'admin' || req.user.role === 'telecaller')) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Not authorized as an admin or telecaller' });
+  }
+};
+
+module.exports = { protect, admin, adminOrTelecaller };

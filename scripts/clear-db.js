@@ -55,7 +55,7 @@ const clearData = async () => {
     console.log('Cleared all Counters (Sequence IDs Reset)');
 
     // Delete all users EXCEPT the admin
-    const adminEmail = process.env.ADMIN_EMAIL || 'volthut@gmail.com';
+    const adminEmail = process.env.ADMIN_EMAIL || 'sunflowersolar75@gmail.com';
     const result = await User.deleteMany({ email: { $ne: adminEmail } });
     console.log(`Cleared ${result.deletedCount} Users (Main Admin Retained)`);
 

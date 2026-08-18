@@ -49,10 +49,10 @@ const cleanAndSeed = async () => {
     
     // Create new admin user
     const adminUser = new User({
-      name: process.env.ADMIN_NAME || 'Admin Azad Volthut Power LLP',
-      email: process.env.ADMIN_EMAIL || 'volthut@gmail.com',
-      phone: process.env.ADMIN_PHONE || '6387006600',
-      password: process.env.ADMIN_PASSWORD || 'Admin@azad123', // Hashes automatically via userModel's pre-save middleware
+      name: process.env.ADMIN_NAME || 'Admin M/S Sunflower Solar',
+      email: process.env.ADMIN_EMAIL || 'sunflowersolar75@gmail.com',
+      phone: process.env.ADMIN_PHONE || '9874973079',
+      password: process.env.ADMIN_PASSWORD || 'Admin@sunflower123', // Hashes automatically via userModel's pre-save middleware
       role: 'admin',
       status: 'active'
     });
@@ -63,7 +63,7 @@ const cleanAndSeed = async () => {
     console.log('==================================================');
     console.log(`Admin User : ${adminUser.name}`);
     console.log(`Email      : ${adminUser.email}`);
-    console.log(`Password   : ${process.env.ADMIN_PASSWORD || 'Admin@azad123'}`);
+    console.log(`Password   : ${process.env.ADMIN_PASSWORD || 'Admin@sunflower123'}`);
     console.log('Role:     admin');
     console.log('--------------------------------------------------');
     console.log('Database Reset & Clean Setup Completed Successfully.');

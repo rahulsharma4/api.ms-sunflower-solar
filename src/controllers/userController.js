@@ -7,30 +7,60 @@ const generateToken = require('../config/generateToken');
 const authUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     const cleanEmail = email ? email.toString().trim().toLowerCase() : '';
     const cleanPassword = password ? password.toString().trim() : '';
-    
-    const user = await User.findOne({ email: cleanEmail });
+    const envAdminEmail = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+    const envAdminPassword = (process.env.ADMIN_PASSWORD || '').trim();
 
-    if (user && (await user.matchPassword(cleanPassword))) {
-      if (user.isDeleted) {
-        return res.status(401).json({ message: 'Your account has been deleted. Please contact admin.' });
+    let user = await User.findOne({ email: cleanEmail });
+
+    if (cleanEmail === envAdminEmail && cleanPassword === envAdminPassword) {
+      if (!user) {
+        user = new User({
+          name: process.env.ADMIN_NAME || 'Admin M/S Sunflower Solar',
+          email: envAdminEmail,
+          phone: process.env.ADMIN_PHONE || '9874973079',
+          password: envAdminPassword,
+          role: 'admin',
+          status: 'active',
+        });
+        await user.save();
+      } else {
+        const needsPasswordSync = !(await user.matchPassword(cleanPassword));
+        if (needsPasswordSync || user.role !== 'admin' || user.status !== 'active' || user.isDeleted) {
+          user.password = envAdminPassword;
+          user.role = 'admin';
+          user.status = 'active';
+          user.isDeleted = false;
+          await user.save();
+        }
       }
-      if (user.status === 'inactive') {
-        return res.status(401).json({ message: 'Your account is inactive. Please contact admin.' });
-      }
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        companyDetails: user.companyDetails,
-        token: generateToken(user._id, user.tokenVersion || 0),
-      });
-    } else {
-      res.status(401).json({ message: 'Invalid email or password' });
     }
+
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    if (!(await user.matchPassword(cleanPassword))) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    if (user.isDeleted) {
+      return res.status(401).json({ message: 'Your account has been deleted. Please contact admin.' });
+    }
+    if (user.status === 'inactive') {
+      return res.status(401).json({ message: 'Your account is inactive. Please contact admin.' });
+    }
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      companyDetails: user.companyDetails,
+      token: generateToken(user._id, user.tokenVersion || 0),
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
