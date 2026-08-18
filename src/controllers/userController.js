@@ -62,6 +62,10 @@ const authUser = async (req, res) => {
       token: generateToken(user._id, user.tokenVersion || 0),
     });
   } catch (error) {
+    console.error('Auth error:', error && error.stack ? error.stack : error);
+    if (error && /JWT_SECRET/.test(error.message)) {
+      return res.status(500).json({ message: 'Server misconfiguration: JWT_SECRET missing' });
+    }
     res.status(500).json({ message: error.message });
   }
 };
