@@ -7,6 +7,18 @@ const connectDB = require('./src/config/db');
 // Load env vars
 dotenv.config();
 
+// Ensure `crypto` is available on `globalThis` for MongoDB driver (SCRAM-SHA256).
+// Some Node runtimes used by hosts do not expose `globalThis.crypto` by default.
+try {
+  if (typeof globalThis.crypto === 'undefined') {
+    // eslint-disable-next-line global-require
+    globalThis.crypto = require('crypto');
+  }
+} catch (e) {
+  // If this fails, connection will likely error later and logs will show the cause.
+  console.warn('Warning: unable to polyfill globalThis.crypto:', e && e.message ? e.message : e);
+}
+
 // Validate required environment variables early so runtime errors are clearer
 const envPresent = key => !!(process.env[key] && process.env[key].toString().trim() !== '');
 const mongouri = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.DATABASE_URL;
