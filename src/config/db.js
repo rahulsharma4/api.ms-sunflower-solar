@@ -12,9 +12,6 @@ const connectDB = async () => {
   const connectWithRetry = async () => {
     try {
       const opts = {
-        // Recommended options for modern drivers
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
         // Fail fast if server selection takes too long
         serverSelectionTimeoutMS: 10000,
       };
