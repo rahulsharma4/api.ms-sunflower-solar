@@ -11,10 +11,18 @@ try {
 const connectDB = async () => {
   const connectWithRetry = async () => {
     try {
-      const conn = await mongoose.connect(process.env.MONGODB_URI);
+      const opts = {
+        // Recommended options for modern drivers
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        // Fail fast if server selection takes too long
+        serverSelectionTimeoutMS: 10000,
+      };
+
+      const conn = await mongoose.connect(process.env.MONGODB_URI, opts);
       console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
-      console.error(`MongoDB Connection Error: ${error.message}`);
+      console.error('MongoDB Connection Error:', error && error.stack ? error.stack : error);
       console.log('Retrying MongoDB connection in 10 seconds...');
       setTimeout(connectWithRetry, 10000);
     }
