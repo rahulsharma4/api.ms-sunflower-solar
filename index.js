@@ -7,6 +7,18 @@ const connectDB = require('./src/config/db');
 // Load env vars
 dotenv.config();
 
+// Validate required environment variables early so runtime errors are clearer
+const requiredEnvs = ['MONGODB_URI', 'JWT_SECRET'];
+const missing = requiredEnvs.filter(k => !process.env[k]);
+if (missing.length) {
+  console.error('Missing required environment variables:', missing.join(', '));
+  // Do not exit in development to allow local convenience, but exit in production
+  if (process.env.NODE_ENV === 'production') {
+    console.error('Exiting because required environment variables are missing.');
+    process.exit(1);
+  }
+}
+
 // Connect to database
 connectDB();
 
