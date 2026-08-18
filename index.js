@@ -70,6 +70,9 @@ app.get('/', (req, res) => {
   res.send('M/S Sunflower Solar CRM API is running...');
 });
 
+// Health endpoint for quick debugging (reports env presence and DB ready state)
+app.get('/api/health', require('./src/controllers/healthController').health);
+
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
