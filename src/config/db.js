@@ -11,12 +11,15 @@ try {
 const connectDB = async () => {
   const connectWithRetry = async () => {
     try {
+      const uri = (process.env.MONGODB_URI || process.env.MONGO_URI || process.env.DATABASE_URL || '').toString().trim();
+      if (!uri) throw new Error('MONGODB_URI not set');
+
       const opts = {
         // Fail fast if server selection takes too long
         serverSelectionTimeoutMS: 10000,
       };
 
-      const conn = await mongoose.connect(process.env.MONGODB_URI, opts);
+      const conn = await mongoose.connect(uri, opts);
       console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
       console.error('MongoDB Connection Error:', error && error.stack ? error.stack : error);
